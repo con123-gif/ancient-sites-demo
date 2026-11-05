@@ -1,0 +1,42 @@
+<!doctype html><html lang="en-GB"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Ancient Sites AI</title><meta name="theme-color" content="#5b4636"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon.svg">
+<link rel="stylesheet" href="vendor/leaflet.css"><link rel="stylesheet" href="vendor/MarkerCluster.css"><link rel="stylesheet" href="vendor/MarkerCluster.Default.css"><link rel="stylesheet" href="app.css"></head>
+<body><header><h1>Ancient Sites AI</h1><span><span id="net" class="badge hidden">Offline</span> <span id="aimode" class="badge"></span></span></header>
+<main>
+<section id="tab-here" class="tab active">
+ <div class="askzone">
+  <button id="lookbtn" class="bigask">📷 Ask about what I'm looking at</button>
+  <input type="file" id="lookfile" accept="image/*" capture="environment" hidden>
+  <form id="qform" class="qrow"><input id="q" placeholder="Or type a question (optional)…" autocomplete="off" enterkeyhint="send"><button type="button" id="mic" class="ghost hidden" title="Speak your question" aria-label="Speak your question">🎤</button><button id="qsend" aria-label="Ask">➤</button></form>
+  <div class="chips"><button class="chip" data-q="What is this?">What is this?</button><button class="chip" data-q="Who built it?">Who built it?</button><button class="chip" data-q="When was it built?">When was it built?</button><button class="chip" data-q="What does this inscription say?" data-photo="1">📷 What does this inscription say?</button><button class="chip" data-q="What's nearby?">What's nearby?</button></div>
+  <div id="ctx" class="ctx small muted">📍 Uses your location to find the nearest site.</div>
+ </div>
+ <div id="answers"></div>
+ <div id="sitecard" class="card hidden"></div>
+ <div class="row"><input id="search" type="search" placeholder="Search sites or countries…" autocomplete="off"><button id="nearme" class="ghost2">📍 Near me</button></div>
+ <ul id="results" class="results"></ul><div id="atsite" class="notice hidden"></div><div id="map"></div>
+</section>
+<section id="tab-offline" class="tab"><h2>Offline site packs</h2>
+ <p class="small muted">Download a site before you go: its facts, nearby sites, a small map area and any images are saved on this phone. Questions asked with no signal are queued and sent automatically when you're back online.</p>
+ <div id="storage" class="small"></div><ul id="packs" class="plist"></ul>
+ <h3>Waiting to send / recent</h3><ul id="outbox" class="plist"></ul><button id="clearsent" class="ghost2">Clear sent items</button>
+ <p class="small muted">Map tiles: to respect the <a href="https://operations.osmfoundation.org/policies/tiles/" target="_blank" rel="noopener">OpenStreetMap tile usage policy</a>, each pack stores at most 120 tiles (zoom 13–16, within about 800 m of the site), only when you tap Download. No bulk or background tile downloading.</p></section>
+<section id="tab-report" class="tab"><h2>Log a possible find</h2>
+ <div id="ack" class="danger"><h3>⚠️ Do not dig, touch or remove anything</h3><p>Observe and report only. Disturbing archaeology may be illegal (e.g. on scheduled monuments in the UK, and anywhere in Egypt). Leave everything where it is.</p><label><input type="checkbox" id="ackbox"> I understand and will not dig, touch or remove anything</label><button id="ackbtn" disabled>Continue</button></div>
+ <form id="repform" class="hidden">
+  <label>I am a <select name="user_type" id="utype"><option value="visitor">Visitor</option><option value="detectorist">Detectorist</option><option value="archaeologist">Archaeologist</option></select></label>
+  <p>Location: <span id="gps">locating…</span></p><p>Time: <span id="ts"></span></p>
+  <label>Photos <input type="file" name="photos" accept="image/*" capture="environment" multiple></label>
+  <div id="detfields" class="hidden"><label>Depth (cm, optional) <input name="depth_cm" type="number" min="0" step="1"></label>
+  <fieldset><legend>Landowner permission?</legend><label><input type="radio" name="permission" value="yes"> Yes</label> <label><input type="radio" name="permission" value="no" checked> No</label></fieldset></div>
+  <label>Notes <textarea name="notes" rows="3" placeholder="What did you see? Leave it in place."></textarea></label>
+  <button>Submit privately</button></form><div id="repout"></div>
+ <h3>Delete my report</h3><form id="delform" class="row"><input id="delcode" placeholder="Report code" required><button>Delete</button></form><div id="delout"></div></section>
+<section id="tab-about" class="tab"><h2>About</h2><p>Free, open-source (AGPL-3.0) guide to ancient sites. <span id="counts"></span></p>
+ <h3>Data sources</h3><ul><li>Pilot sites: hand-checked facts from Wikipedia, Historic England, English Heritage and UNESCO (links on each site).</li>
+ <li>World Heritage Sites: names, coordinates, country, category and year from <a href="https://www.wikidata.org/">Wikidata</a> (CC0), keyed by UNESCO WHS ID (P757), linked to the official <a href="https://whc.unesco.org/en/list/">UNESCO World Heritage List</a>. Wikidata may differ from UNESCO; the UNESCO page is authoritative. UNESCO descriptions are not republished (UNESCO terms: Copyright © 1992–2026 UNESCO/World Heritage Centre. All rights reserved; republication needs written permission).</li><li>Add more sites via <code>data/extra_sites.json</code>.</li>
+ <li>Map tiles © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors (ODbL).</li></ul>
+ <h3>Privacy notice (UK GDPR)</h3><p>No accounts, no tracking, no analytics, no ads, and we never sell data. Your location is used in your browser for "Near me"; it is sent to the server only when you ask a question or submit a report, and is not stored with questions. Offline packs and queued items stay on your device until sent or deleted. Reports (photos, GPS, time, notes) are stored privately for review by heritage experts under legitimate interest / public-interest archaeology, and may be passed to the relevant authority (e.g. Finds Liaison Officer / Portable Antiquities Scheme, Egypt's Supreme Council of Antiquities). Exact coordinates are never shown publicly; the public map shows only ~1 km counts. Questions, photos you take with "Ask" and your approximate location are sent to this server to find the nearest site, and may be sent to the configured AI provider when live AI is on. You can delete your report at any time with your report code. You can contact the operator to exercise your rights or complain to the ICO (ico.org.uk).</p></section>
+</main>
+<nav><button data-tab="here" class="active">📷<br>Ask</button><button data-tab="offline">⬇️<br>Offline<span id="qbadge" class="qbadge hidden"></span></button><button data-tab="report">📝<br>Report</button><button data-tab="about">ℹ️<br>About</button></nav>
+<script src="vendor/leaflet.js"></script><script src="vendor/leaflet.markercluster.js"></script><script src="shim.js"></script><script src="store.js"></script><script src="app.js"></script></body></html>
